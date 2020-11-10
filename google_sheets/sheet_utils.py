@@ -19,9 +19,11 @@ import pandas as pd
 
 class Sheet_Utils():
     
-    SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-    STRUCTURE = {}
+    def __init__(self):
+        self.SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+        self.STRUCTURE = {}
 
+    
     #Function to get Google Sheet Credentials
     def gsheet_api_check(self):
         creds = None
@@ -33,7 +35,7 @@ class Sheet_Utils():
                 creds.refresh(Request())
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(
-                    'credentials.json', SCOPES)
+                    'credentials.json', self.SCOPES)
                 creds = flow.run_local_server(port=0)
             with open('token.pickle', 'wb') as token:
                 pickle.dump(creds, token)
@@ -43,20 +45,20 @@ class Sheet_Utils():
     
     def pull_sheet_data(self, spreadsheet_id, sheets_list):
     
-    """
-    Args:
-    
-    - spreadsheet_id: the spreadsheet from which you want to read data. 
-    Id is contained within your gsheet url, in the following fashion 
-      --> https://docs.google.com/spreadsheets/d/{spreadsheet_id}
-      
-    - sheets_list: A list-like element containing the sheet names within your file.
-      --> ['Sheet 1', 'Sheet 2']
-    
-    Returns:
-      STRUCTURE -> A dictionary of dataframes, each containing data for the read sheets.
-      
-    """
+        """
+        Args:
+
+        - spreadsheet_id: the spreadsheet from which you want to read data. 
+        Id is contained within your gsheet url, in the following fashion 
+          --> https://docs.google.com/spreadsheets/d/{spreadsheet_id}
+
+        - sheets_list: A list-like element containing the sheet names within your file.
+          --> ['Sheet 1', 'Sheet 2']
+
+        Returns:
+          STRUCTURE -> A dictionary of dataframes, each containing data for the read sheets.
+
+        """
         creds = self.gsheet_api_check()
         service = build('sheets', 'v4', credentials=creds, cache_discovery=False)
         active_sheet = service.spreadsheets()
